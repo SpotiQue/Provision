@@ -1,0 +1,44 @@
+---
+- name: Install production packages
+  become: yes
+  apt: name={{ item }}
+  with_items:
+    - nginx
+    - supervisor
+
+- name: Build frontend
+  command: npm run build chdir={{ project_path }}/frontend
+
+- name: Create supervisor configs
+  become: yes
+  template:
+    src: "supervisor.{{ item }}.conf.jinja2"
+    dest: "/etc/supervisor/conf.d/{{ item }}.conf"
+  with_items:
+    - api
+    - core
+
+- name: Restart supervisor applications
+  become: yes
+  supervisorctl: name={{ item }} state=restarted
+  with_items:
+    - api
+    - core
+
+- name: Create nginx site config
+  become: yes
+  template: src=nginx.conf.jinja2 dest="/etc/nginx/sites-available/api.conf"
+  notify: restart nginx
+
+- name: Enable nginx site
+  become: yes
+  file:
+    src: "/etc/nginx/sites-available/api.conf"
+    dest: "/etc/nginx/sites-enabled/api.conf"
+    state: link
+  notify: restart nginx
+
+- name: Remove default nginx config
+  become: yes
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx

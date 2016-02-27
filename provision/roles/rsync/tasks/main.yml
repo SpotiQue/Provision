@@ -1,0 +1,10 @@
+---
+- name: Install rsync
+  become: yes
+  apt: name=rsync state=present update_cache=yes
+
+- name: rsync the project folder into raspi.
+  become: yes
+  synchronize:
+    src: "../../../../"
+    dest: "{{ project_path }}"

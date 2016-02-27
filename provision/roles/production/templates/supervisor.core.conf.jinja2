@@ -1,0 +1,6 @@
+[program:core]
+command = {{ project_path }}/core/venv/bin/python run.py
+autorestart = true
+user = {{ ansible_user }}
+directory = {{ project_path }}/core
+environment = CORE_ENVIRONMENT='raspberry'

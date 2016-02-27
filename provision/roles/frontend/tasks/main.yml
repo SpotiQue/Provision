@@ -1,0 +1,13 @@
+---
+- name: Download node dist
+  become: yes
+  unarchive: src={{ node_url }} dest=/tmp copy=no
+
+- name: Install node
+  become: yes
+  shell: cp -R /tmp/{{ node_file_name }}/* /usr/local/ creates=/usr/local/bin/node
+
+- name: Install npm dependencies
+  shell: npm install
+  args:
+    chdir: "{{ project_path }}/frontend"

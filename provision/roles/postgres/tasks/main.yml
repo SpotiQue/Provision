@@ -1,0 +1,24 @@
+---
+- name: Set locale
+  become: yes
+  command: update-locale LC_ALL=C.UTF-8
+
+- name: install postgresql
+  become: yes
+  apt: name="{{ item }}" state=present update_cache=true
+  with_items:
+    - postgresql
+    - postgresql-contrib
+    - python-psycopg2
+
+- name: create database role
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ ansible_user }}"
+    state: present
+
+- name: create database
+  become: yes
+  become_user: postgres
+  postgresql_db: name=spotique owner={{ ansible_user }} state=present

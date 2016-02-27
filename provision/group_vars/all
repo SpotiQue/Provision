@@ -1,0 +1,5 @@
+project_path: /srv/spotique
+processor_architecture: x64
+node_version: 5.7.0
+node_file_name: node-v5.7.0-linux-{{ processor_architecture }}
+node_url: https://nodejs.org/dist/v{{ node_version }}/{{ node_file_name }}.tar.gz

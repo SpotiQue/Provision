@@ -1,0 +1,5 @@
+[program:api]
+command = {{ project_path }}/api/venv/bin/gunicorn api:app -b localhost:5000 --worker-class aiohttp.worker.GunicornWebWorker
+autorestart = true
+user = {{ ansible_user }}
+directory = {{ project_path }}/api

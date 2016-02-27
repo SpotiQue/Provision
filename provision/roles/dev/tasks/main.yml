@@ -1,0 +1,38 @@
+---
+- name: Install additional packages
+  apt: name={{ item }} state=present
+  become: yes
+  with_items:
+    - tmux
+    - ruby
+    - ruby-dev
+    - nginx
+
+- name: Install tmuxinator
+  become: yes
+  command: gem install tmuxinator
+
+- name: Create tmuxinator directory
+  file: path=~/.tmuxinator/ state=directory
+
+- name: Create tmuxinator config
+  template: src=tmuxinator.conf.jinja2 dest=~/.tmuxinator/spotique.yml
+
+- name: Enable mouse support in tmux
+  template: src=tmux.conf.jinja2 dest=~/.tmux.conf
+
+- name: Add run command
+  lineinfile:
+    regexp: alias run
+    line: alias run="tmuxinator start spotique"
+    dest: ~/.bashrc
+
+- name: Create nginx site config
+  become: yes
+  template: src=nginx.conf.jinja2 dest="/etc/nginx/sites-enabled/spotique"
+  notify: restart nginx
+
+- name: Remove default nginx config
+  become: yes
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx

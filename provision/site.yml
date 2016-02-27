@@ -1,0 +1,19 @@
+---
+- hosts: raspberry
+  roles:
+    - rsync
+
+- hosts: all
+  roles:
+    - postgres
+    - api
+    - frontend
+    - core
+
+- hosts: raspberry
+  roles:
+    - production
+
+- hosts: dev
+  roles:
+    - dev
